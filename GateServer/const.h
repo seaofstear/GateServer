@@ -4,3 +4,8 @@
 #include <memory>
 #include <chrono>
 #include <iostream>
+#include "Singleton.h"
+#include <vector>
+#include <thread>
+#include <functional>
+#include <map>

@@ -1,7 +1,7 @@
 #include "CServer.h"
-
+#include "HttpConnection.h"
 CServer::CServer(boost::asio::io_context& ioc, unsigned short& prot):_ioc(ioc),
-_acceptor(ioc,boost::asio::ip::tcp::v4(),prot),_socket(ioc) {
+_acceptor(ioc,boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(),prot)),_socket(ioc) {
 
 }
 
@@ -19,7 +19,7 @@ void CServer::Start() {
 			}
 			
 			//创建新连接，并且创建HTTPconnection类
-			std::make_shared<HttpConnection>(std::move(_socket))->Start();
+			std::make_shared<HttpConnection>(std::move(self->_socket))->Start();
 		}
 		catch (std::exception& exp) {
 

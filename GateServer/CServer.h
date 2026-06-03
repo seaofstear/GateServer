@@ -2,6 +2,7 @@
 #include <boost/beast/http.hpp>
 #include "const.h"
 
+
 class CServer:public std::enable_shared_from_this<CServer>
 {
 public:
