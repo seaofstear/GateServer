@@ -6,9 +6,15 @@ void LogicSystem::RegGet(std::string url, HttpHandler handler) {
 }
 
 LogicSystem::LogicSystem() {
-	RegGet("/get_test", [](std::shared_ptr<HttpConnection> connection) {
-		boost::beast::ostream(connection->_response.body()) << "receive get_test req";
-	});
+    RegGet("/get_test", [](std::shared_ptr<HttpConnection> connection) {
+        boost::beast::ostream(connection->_response.body()) << "receive get_test req " << std::endl;
+        int i = 0;
+        for (auto& elem : connection->_get_params) {
+            i++;
+            boost::beast::ostream(connection->_response.body()) << "param" << i << " key is " << elem.first;
+            boost::beast::ostream(connection->_response.body()) << ", " << " value is " << elem.second << std::endl;
+        }
+        });
 }
 
 bool LogicSystem::HandleGet(std::string path, std::shared_ptr<HttpConnection> con) {
