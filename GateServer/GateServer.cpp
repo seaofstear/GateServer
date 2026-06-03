@@ -1,6 +1,5 @@
 ﻿
 #include "CServer.h"
-#include <nlohmann/json.hpp>
 
 int main() {
 	try {
@@ -14,6 +13,7 @@ int main() {
 			ioc.stop();
 		});
 		std::make_shared<CServer>(ioc, port)->Start();
+		std::cout << "Server is running on port " << port << std::endl;
 		ioc.run();
 	}
 	catch (std::exception const& e) {

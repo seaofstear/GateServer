@@ -42,8 +42,21 @@ void HttpConnection::HandleReq() {
 		WriteResponse();
 		return;
 	}
-	else {
-		_response.result(boost::beast::http::status::bad_request);
+
+	if(_request.method() == boost::beast::http::verb::post) {
+		bool success = LogicSystem::GetInstance()->HandlePost(_request.target(), shared_from_this());
+		if (!success) {
+			_response.result(boost::beast::http::status::not_found);
+			_response.set(boost::beast::http::field::content_type, "text/plain");
+			boost::beast::ostream(_response.body()) << "url not found\r\n";
+			WriteResponse();
+			return;
+		}
+
+		_response.result(boost::beast::http::status::ok);
+		_response.set(boost::beast::http::field::server, "GateServer");
+		WriteResponse();
+		return;
 	}
 
 }
