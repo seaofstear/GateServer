@@ -20,9 +20,12 @@ void CServer::Start() {
 			
 			//创建新连接，并且创建HTTPconnection类
 			std::make_shared<HttpConnection>(std::move(self->_socket))->Start();
+			//继续监听
+			self->Start();
 		}
 		catch (std::exception& exp) {
-
+			std::cout << "exception is " << exp.what() << std::endl;
+			self->Start();
 		}
 		});
 }
