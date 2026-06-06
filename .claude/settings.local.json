@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where protoc *)",
+      "Bash(D:\\\\cppsoft\\\\protoc\\\\bin\\\\protoc.exe *)",
+      "Bash(\"D:\\\\cppsoft\\\\grpc\\\\visualpro\\\\Debug\\\\grpc_cpp_plugin.exe\" --version)",
+      "Bash(rm -f message.pb.h message.pb.cc message.grpc.pb.h message.grpc.pb.cc)",
+      "Bash(\"D:\\\\cppsoft\\\\protoc\\\\bin\\\\protoc.exe\" --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=\"D:\\\\cppsoft\\\\grpc\\\\visualpro\\\\Debug\\\\grpc_cpp_plugin.exe\" -I. message.proto)",
+      "Bash(dumpbin /SYMBOLS \"D:\\\\cppsoft\\\\protobuf\\\\protobuf-3.21.9\\\\visualstudio\\\\Debug\\\\libprotobufd.lib\")",
+      "Bash(dumpbin /SYMBOLS \"D:\\\\cppsoft\\\\grpc\\\\visualpro\\\\third_party\\\\protobuf\\\\Debug\\\\libprotobufd.lib\")",
+      "Bash(grep -i \"\\\\.dll$\")"
+    ]
+  }
+}

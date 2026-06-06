@@ -18,6 +18,7 @@ struct SectionInfo {
         }
 
         this->_section_datas = src._section_datas;
+        return *this;
     }
 
     std::map<std::string, std::string> _section_datas;
@@ -25,7 +26,7 @@ struct SectionInfo {
         if (_section_datas.find(key) == _section_datas.end()) {
             return "";
         }
-        // ÕâÀï¿ÉÒÔÌí¼ÓÒ»Ð©±ß½ç¼ì²é  
+        // è¿™é‡Œå¯ä»¥æ·»åŠ ä¸€äº›è¾¹ç•Œæ£€æŸ¥  
         return _section_datas[key];
     }
 };
@@ -50,6 +51,7 @@ public:
         }
 
         this->_config_map = src._config_map;
+        return *this;
     };
 
     ConfigMgr(const ConfigMgr& src) {
@@ -59,6 +61,6 @@ public:
     ConfigMgr();
 private:
 
-    // ´æ´¢sectionºÍkey-value¶ÔµÄmap  
+    // å­˜å‚¨sectionå’Œkey-valueå¯¹çš„map  
     std::map<std::string, SectionInfo> _config_map;
 };
