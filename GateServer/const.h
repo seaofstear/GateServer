@@ -19,6 +19,8 @@
 #include <queue>
 #include <mutex>
 #include <condition_variable>
+#include "hiredis.h"
+#include <cassert>
 
 enum ErrorCodes {
 	Success = 0,
