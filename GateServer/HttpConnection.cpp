@@ -1,7 +1,12 @@
 #include "HttpConnection.h"
 #include "LogicSystem.h"
-HttpConnection::HttpConnection(boost::asio::ip::tcp::socket socket):_socket(std::move(socket)) {
+HttpConnection::HttpConnection(boost::asio::io_context& ioc):_socket(ioc) {
 
+}
+
+
+boost::asio::ip::tcp::socket& HttpConnection::GetSocket() {
+	return _socket;
 }
 
 void HttpConnection::Start() {
