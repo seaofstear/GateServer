@@ -27,7 +27,6 @@ void TestRedisMgr() {
 
 
 int main() {
-	void TestRedisMgr();
 
 	auto& gCfgMgr = ConfigMgr::Inst();
 	std::string gate_port_str = gCfgMgr["GateServer"]["Port"];
