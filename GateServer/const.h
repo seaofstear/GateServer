@@ -21,6 +21,12 @@
 #include <condition_variable>
 #include "hiredis.h"
 #include <cassert>
+#include <jdbc/mysql_connection.h>
+#include <jdbc/mysql_driver.h>
+#include <jdbc/cppconn/prepared_statement.h>
+#include <jdbc/cppconn/resultset.h>
+#include <jdbc/cppconn/statement.h>
+#include <jdbc/cppconn/exception.h>
 
 namespace beast = boost::beast;
 namespace http = beast::http;
@@ -44,5 +50,18 @@ enum ErrorCodes {
 	CREATE_CHAT_FAILED = 1012, //创建聊天失败
 	LOAD_CHAT_FAILED = 1013, //加载聊天失败
 };;
+
+
+class Defer {
+public:
+	Defer(std::function<void()> func): func_(func){}
+
+	~Defer() {
+		func_();
+	}
+
+private:
+	std::function<void()> func_;
+};
 
 #define CODEPREFIX "code_"

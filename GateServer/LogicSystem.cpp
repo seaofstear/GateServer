@@ -2,6 +2,7 @@
 #include "HttpConnection.h"
 #include "VerifyGrpcClient.h"
 #include "RedisMgr.h"
+#include "MysqlMgr.h"
 
 void LogicSystem::RegGet(std::string url, HttpHandler handler) {
 	_get_handlers.insert(make_pair(url, handler));
@@ -116,6 +117,14 @@ LogicSystem::LogicSystem() {
          }
 
         //查找数据库判断用户是否存在
+        int uid = MysqlMgr::GetInstance()->RegUser(name, email, pwd);
+        if (uid == 0 || uid == -1) {
+            std::cout << " user or email exist" << std::endl;
+            root["error"] = ErrorCodes::UserExist;
+            std::string jsonstr = root.dump();
+            beast::ostream(connection->_response.body()) << jsonstr;
+            return true;
+        }
 
         root["error"] = 0;
         root["email"] = email;
