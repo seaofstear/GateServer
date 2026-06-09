@@ -8,7 +8,13 @@
       "Bash(\"D:\\\\cppsoft\\\\protoc\\\\bin\\\\protoc.exe\" --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=\"D:\\\\cppsoft\\\\grpc\\\\visualpro\\\\Debug\\\\grpc_cpp_plugin.exe\" -I. message.proto)",
       "Bash(dumpbin /SYMBOLS \"D:\\\\cppsoft\\\\protobuf\\\\protobuf-3.21.9\\\\visualstudio\\\\Debug\\\\libprotobufd.lib\")",
       "Bash(dumpbin /SYMBOLS \"D:\\\\cppsoft\\\\grpc\\\\visualpro\\\\third_party\\\\protobuf\\\\Debug\\\\libprotobufd.lib\")",
-      "Bash(grep -i \"\\\\.dll$\")"
+      "Bash(grep -i \"\\\\.dll$\")",
+      "Bash(cp D:/cppsoft/mysql_connector/lib64/debug/vs14/mysqlcppconn.lib D:/cppsoft/mysql_connector/lib64/vs14/)",
+      "Bash(cp D:/cppsoft/mysql_connector/lib64/debug/vs14/mysqlcppconnx.lib D:/cppsoft/mysql_connector/lib64/vs14/)",
+      "Bash(cp D:/cppsoft/mysql_connector/lib64/debug/vs14/mysqlcppconn-static.lib D:/cppsoft/mysql_connector/lib64/vs14/)",
+      "Bash(cp D:/cppsoft/mysql_connector/lib64/debug/vs14/mysqlcppconnx-static.lib D:/cppsoft/mysql_connector/lib64/vs14/)",
+      "Bash(cp D:/cppsoft/mysql_connector/lib64/debug/mysqlcppconn-10-vs14.dll D:/cppsoft/mysql_connector/lib64/)",
+      "Bash(cp D:/cppsoft/mysql_connector/lib64/debug/mysqlcppconnx-2-vs14.dll D:/cppsoft/mysql_connector/lib64/)"
     ]
   }
 }
