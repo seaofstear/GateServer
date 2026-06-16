@@ -137,6 +137,75 @@ LogicSystem::LogicSystem() {
         return true;
         });
 
+    //重置回调逻辑
+    RegPost("/reset_pwd", [](std::shared_ptr<HttpConnection> connection) {
+        auto body_str = boost::beast::buffers_to_string(connection->_request.body().data());
+        std::cout << "receive body is " << body_str << std::endl;
+        connection->_response.set(http::field::content_type, "text/json");
+        nlohmann::json root;
+        nlohmann::json src_root;
+        src_root = nlohmann::json::parse(body_str, nullptr, false);
+        if (src_root.is_discarded()) {
+            std::cout << "Failed to parse JSON data!" << std::endl;
+            root["error"] = ErrorCodes::Error_Json;
+            std::string jsonstr = root.dump();
+            beast::ostream(connection->_response.body()) << jsonstr;
+            return true;
+        }
+
+        auto email = src_root["email"].get<std::string>();
+        auto name = src_root["user"].get<std::string>();
+        auto pwd = src_root["passwd"].get<std::string>();
+
+        //先查找redis中email对应的验证码是否合理
+        std::string  varify_code;
+        bool b_get_varify = RedisMgr::GetInstance()->Get(CODEPREFIX + src_root["email"].get<std::string>(), varify_code);
+        if (!b_get_varify) {
+            std::cout << " get varify code expired" << std::endl;
+            root["error"] = ErrorCodes::VarifyExpired;
+            std::string jsonstr = root.dump();
+            beast::ostream(connection->_response.body()) << jsonstr;
+            return true;
+        }
+
+        if (varify_code != src_root["varifycode"].get<std::string>()) {
+            std::cout << " varify code error" << std::endl;
+            root["error"] = ErrorCodes::VarifyCodeErr;
+            std::string jsonstr = root.dump();
+            beast::ostream(connection->_response.body()) << jsonstr;
+            return true;
+        }
+        //查询数据库判断用户名和邮箱是否匹配
+        bool email_valid = MysqlMgr::GetInstance()->CheckEmail(name, email);
+        if (!email_valid) {
+            std::cout << " user email not match" << std::endl;
+            root["error"] = ErrorCodes::EmailNotMatch;
+            std::string jsonstr = root.dump();
+            beast::ostream(connection->_response.body()) << jsonstr;
+            return true;
+        }
+
+        //更新密码为最新密码
+        bool b_up = MysqlMgr::GetInstance()->UpdatePwd(name, pwd);
+        if (!b_up) {
+            std::cout << " update pwd failed" << std::endl;
+            root["error"] = ErrorCodes::PasswdUpFailed;
+            std::string jsonstr = root.dump();
+            beast::ostream(connection->_response.body()) << jsonstr;
+            return true;
+        }
+
+        std::cout << "succeed to update password" << pwd << std::endl;
+        root["error"] = 0;
+        root["email"] = email;
+        root["user"] = name;
+        root["passwd"] = pwd;
+        root["varifycode"] = src_root["varifycode"].get<std::string>();
+        std::string jsonstr = root.dump();
+        beast::ostream(connection->_response.body()) << jsonstr;
+        return true;
+        });
+
 }
 
 
