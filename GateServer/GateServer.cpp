@@ -24,6 +24,8 @@ int main() {
 		std::make_shared<CServer>(ioc, port)->Start();
 		std::cout << "Server is running on port " << port << std::endl;
 		ioc.run();
+		//显式关闭Redis连接池，确保退出前资源释放
+		RedisMgr::GetInstance()->Close();
 	}
 	catch (std::exception const& e) {
 		std::cerr << "Error: " << e.what() << std::endl;

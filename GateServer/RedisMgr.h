@@ -4,10 +4,10 @@
 
 class RedisConPool {
 public:
-    RedisConPool(size_t poolSize, const char* host, int port, const char* pwd)
+    RedisConPool(size_t poolSize, const std::string& host, int port, const std::string& pwd)
         : poolSize_(poolSize), host_(host), port_(port), b_stop_(false) {
         for (size_t i = 0; i < poolSize_; ++i) {
-            auto* context = redisConnect(host, port);
+            auto* context = redisConnect(host.c_str(), port);
             if (context == nullptr || context->err != 0) {
                 if (context != nullptr) {
                     redisFree(context);
@@ -15,11 +15,19 @@ public:
                 continue;
             }
 
-            auto reply = (redisReply*)redisCommand(context, "AUTH %s", pwd);
-            if (reply->type == REDIS_REPLY_ERROR) {
+                //设置命令超时（2s），避免 Redis 异常时业务线程无限阻塞
+    struct timeval timeout;
+    timeout.tv_sec = 3;
+    timeout.tv_usec = 0;
+    redisSetTimeout(context, timeout);
+
+            auto reply = (redisReply*)redisCommand(context, "AUTH %s", pwd.c_str());
+            if (reply == nullptr || reply->type == REDIS_REPLY_ERROR) {
                 std::cout << "认证失败" << std::endl;
-                //执行成功 释放redisCommand执行后返回的redisReply所占用的内存
-                freeReplyObject(reply);
+                //执行失败 释放redisCommand执行后返回的redisReply所占用的内存
+                if (reply != nullptr) {
+                    freeReplyObject(reply);
+                }
                 redisFree(context);
                 continue;
             }
@@ -35,6 +43,8 @@ public:
     ~RedisConPool() {
         std::lock_guard<std::mutex> lock(mutex_);
         while (!connections_.empty()) {
+            auto* context = connections_.front();
+            redisFree(context);
             connections_.pop();
         }
     }
@@ -56,9 +66,19 @@ public:
         return context;
     }
 
-    void returnConnection(redisContext* context) {
+        void returnConnection(redisContext* context) {
         std::lock_guard<std::mutex> lock(mutex_);
         if (b_stop_) {
+            if (context != nullptr) {
+                redisFree(context);
+            }
+            return;
+        }
+        //毒连接淘汰：连接层错误（err != 0）或空指针不再放回池
+        if (context == nullptr || context->err != 0) {
+            if (context != nullptr) {
+                redisFree(context);
+            }
             return;
         }
         connections_.push(context);
@@ -73,7 +93,7 @@ public:
 private:
     std::atomic<bool> b_stop_;
     size_t poolSize_;
-    const char* host_;
+    std::string host_;
     int port_;
     std::queue<redisContext*> connections_;
     std::mutex mutex_;
